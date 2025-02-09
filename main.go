@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/FazylovAsylkhan/kuryltai-server/internal/database"
+	"github.com/FazylovAsylkhan/kuryltai-server/token"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/cors"
 	"github.com/joho/godotenv"
@@ -15,7 +17,10 @@ import (
 
 type apiConfig struct {
 	DB *database.Queries
+	tokenMaker *token.JWTMaker
 }
+
+const minSecretKeySize = 32
 
 func main() {
 	godotenv.Load()
@@ -27,6 +32,13 @@ func main() {
 	if dbURL == "" {
 		log.Fatal("DB is not found in the environment")
 	}
+	secretKey := os.Getenv("SECRET_KEY")
+	if secretKey == "" {
+		log.Fatal("SECRET_KEY is not found in the environment")
+	}
+	if len(strings.Split(secretKey, "")) < minSecretKeySize {
+		log.Fatalf("Secret_KEY must be at least %d characters", minSecretKeySize)
+	}
 
 	conn, err := sql.Open("postgres", dbURL)
 	if err != nil {
@@ -35,6 +47,7 @@ func main() {
 
 	apiCfg := apiConfig{
 		DB: database.New(conn),
+		tokenMaker: token.NewJWTMaker(secretKey),
 	} 
 
 	router := chi.NewRouter()
@@ -48,10 +61,13 @@ func main() {
 	}))
 
 	v1Router := chi.NewRouter()
-	v1Router.Post("/users/login", handlerLogin)
+	v1Router.Post("/users/login", apiCfg.handlerLogin)
 	v1Router.Post("/users/signup", apiCfg.handlerSignup)
-	v1Router.Get("/users/user", apiCfg.middlewareAuth(apiCfg.handlerGetUser))
-	v1Router.Get("/users/change-password", apiCfg.middlewareAuth(apiCfg.handlerUpdateUser))
+	v1Router.Post("/users/token/refresh", apiCfg.renewAccessToken)
+	v1Router.Post("/users/token/revoke", apiCfg.revokeSession)
+	v1Router.Post("/users/logout", apiCfg.handlerLogoutUser)
+	// v1Router.Get("/users/user", apiCfg.middlewareAuth())
+	// v1Router.Get("/users/change-password", apiCfg.middlewareAuth(apiCfg.handlerUpdateUser))
 
 	router.Mount("/v1", v1Router)
 	

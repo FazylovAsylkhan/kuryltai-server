@@ -1,27 +1,27 @@
 package main
 
-import (
-	"fmt"
-	"net/http"
+// import (
+// 	"fmt"
+// 	"net/http"
 
-	"github.com/FazylovAsylkhan/kuryltai-server/internal/database"
-	"github.com/FazylovAsylkhan/kuryltai-server/util"
-)
+// 	"github.com/FazylovAsylkhan/kuryltai-server/internal/database"
+// 	"github.com/FazylovAsylkhan/kuryltai-server/util"
+// )
 
-type  authedHandler func(http.ResponseWriter, *http.Request, database.User)
+// type  authedHandler func(http.ResponseWriter, *http.Request, database.User)
 
-func (apiCfg *apiConfig) middlewareAuth(handler authedHandler) http.HandlerFunc {
-	return func (w http.ResponseWriter, r *http.Request) {
-		apiKey, err := util.GetAPIKey(r.Header)
-		if err != nil {
-			respondWithError(w, 403, fmt.Sprintf("Auth error: %v", err))
-			return
-		}
-		user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
-		if err != nil {
-			respondWithError(w, 400, fmt.Sprintf("Couldn't get user: %v", err))
-			return
-		}
-		handler(w, r, user)
-	}
-}
+// func (apiCfg *apiConfig) middlewareAuth(handler authedHandler) http.HandlerFunc {
+// 	return func (w http.ResponseWriter, r *http.Request) {
+// 		apiKey, err := util.GetAPIKey(r.Header)
+// 		if err != nil {
+// 			respondWithError(w, 403, fmt.Sprintf("Auth error: %v", err))
+// 			return
+// 		}
+// 		user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
+// 		if err != nil {
+// 			respondWithError(w, 400, fmt.Sprintf("Couldn't get user: %v", err))
+// 			return
+// 		}
+// 		handler(w, r, user)
+// 	}
+// }
