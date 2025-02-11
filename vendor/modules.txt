@@ -10,6 +10,15 @@ github.com/golang-jwt/jwt/v5
 # github.com/google/uuid v1.6.0
 ## explicit
 github.com/google/uuid
+# github.com/gosimple/slug v1.15.0
+## explicit; go 1.11
+github.com/gosimple/slug
+# github.com/gosimple/unidecode v1.0.1
+## explicit; go 1.16
+github.com/gosimple/unidecode
+# github.com/jaswdr/faker v1.19.1
+## explicit; go 1.11
+github.com/jaswdr/faker
 # github.com/joho/godotenv v1.5.1
 ## explicit; go 1.12
 github.com/joho/godotenv

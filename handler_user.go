@@ -32,14 +32,25 @@ func (apiCfg *apiConfig) handlerSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID := uuid.New()
 	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
-		ID: uuid.New(),
+		ID: userID,
 		CreatedAt: time.Now().UTC(),
 		UpdatedAt: time.Now().UTC(),
 		Email: params.Email,
 		Password: hashed,
 	})
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
+		return
+	}
 
+	_, err = apiCfg.DB.CreateProfile(r.Context(), database.CreateProfileParams{
+		ID: uuid.New(),
+		UserID: userID,
+		Username: util.GetUsernameFrom(user.Email),
+		Slug: util.GenerateRandomSlug(),
+	})
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Couldn't create user: %v", err))
 		return

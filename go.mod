@@ -11,4 +11,12 @@ require (
 	golang.org/x/crypto v0.33.0
 )
 
-require github.com/golang-jwt/jwt/v5 v5.2.1
+require (
+	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/jaswdr/faker v1.19.1
+)
+
+require (
+	github.com/gosimple/slug v1.15.0 // indirect
+	github.com/gosimple/unidecode v1.0.1 // indirect
+)

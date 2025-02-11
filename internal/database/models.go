@@ -5,10 +5,22 @@
 package database
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
+
+type Profile struct {
+	ID          uuid.UUID
+	UserID      uuid.UUID
+	Slug        string
+	Username    string
+	UpdatedAt   time.Time
+	AvatarImage sql.NullString
+	CoverImage  sql.NullString
+	HeadLine    sql.NullString
+}
 
 type Session struct {
 	ID           string
