@@ -56,7 +56,7 @@ func main() {
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders: []string{"*"},
 		ExposedHeaders: []string{"Link"},
-		AllowCredentials: false,
+		AllowCredentials: true,
 		MaxAge: 300,
 	}))
 
@@ -66,6 +66,7 @@ func main() {
 	v1Router.Post("/users/token/refresh", apiCfg.renewAccessToken)
 	v1Router.Post("/users/token/revoke", apiCfg.revokeSession)
 	v1Router.Post("/users/logout", apiCfg.handlerLogoutUser)
+	v1Router.Get("/profiles/profile/me", apiCfg.middlewareAuth(apiCfg.handlerGetProfile))
 	// v1Router.Get("/users/user", apiCfg.middlewareAuth())
 	// v1Router.Get("/users/change-password", apiCfg.middlewareAuth(apiCfg.handlerUpdateUser))
 

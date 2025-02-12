@@ -5,9 +5,9 @@ CREATE TABLE profiles (
     slug VARCHAR(255) NOT NULL UNIQUE,
     username VARCHAR(255) NOT NULL,
     updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    avatar_image VARCHAR(255),
-    cover_image VARCHAR(255),
-    head_line VARCHAR(255)
+    avatar_image VARCHAR(255) DEFAULT '',
+    cover_image VARCHAR(255) DEFAULT '',
+    head_line VARCHAR(255) DEFAULT ''
 );
 
 -- +goose Down

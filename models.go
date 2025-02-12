@@ -14,12 +14,44 @@ type UserRes struct {
 	Email      string `json:"email"`
 }
 
+type ProfileRes struct {
+	ID          uuid.UUID `json:"profile_uuid"`
+	Username    string `json:"username"`
+	Slug        string `json:"slug"`
+	AvatarImage string `json:"avatar_image"`
+	CoverImage  string `json:"cover_image"`
+	HeadLine    string `json:"head_line"`
+}
+
 func databaseUserToUser(dbUser database.User) UserRes {
 	return UserRes{
 		ID: dbUser.ID,
 		CreatedAt: dbUser.CreatedAt,
 		UpdatedAt: dbUser.UpdatedAt,
 		Email: dbUser.Email,
+	}
+}
+
+func databaseProfileToProfile(dbProfile database.Profile) ProfileRes {
+	imgAvatar := ""
+	imgCover := ""
+	headLine := ""
+	if dbProfile.AvatarImage.Valid {
+		imgAvatar = dbProfile.AvatarImage.String
+	}
+	if dbProfile.CoverImage.Valid {
+		imgCover = dbProfile.CoverImage.String
+	}
+	if dbProfile.HeadLine.Valid {
+		headLine = dbProfile.HeadLine.String
+	}
+	return ProfileRes{
+		ID: dbProfile.ID,
+		Username: dbProfile.Username,
+		Slug: dbProfile.Slug,
+		AvatarImage: imgAvatar,
+		CoverImage: imgCover,
+		HeadLine: headLine,
 	}
 }
 
