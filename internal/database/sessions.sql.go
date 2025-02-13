@@ -53,12 +53,12 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 
 const deleteSession = `-- name: DeleteSession :one
 DELETE FROM sessions
-WHERE id = $1
+WHERE user_id = $1
 RETURNING id, user_id, user_email, refresh_token, is_revoked, created_at, expires_at
 `
 
-func (q *Queries) DeleteSession(ctx context.Context, id string) (Session, error) {
-	row := q.db.QueryRowContext(ctx, deleteSession, id)
+func (q *Queries) DeleteSession(ctx context.Context, userID uuid.UUID) (Session, error) {
+	row := q.db.QueryRowContext(ctx, deleteSession, userID)
 	var i Session
 	err := row.Scan(
 		&i.ID,

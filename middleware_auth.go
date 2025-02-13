@@ -20,7 +20,7 @@ func (apiCfg *apiConfig) middlewareAuth(handler authedHandler) http.HandlerFunc 
 	
 		accessClaims, err := apiCfg.tokenMaker.VerifyToken(accessToken)
 		if err != nil {
-			respondWithError(w, 403, fmt.Sprintf("Error verifying token: %v", err))
+			respondWithError(w, 401, fmt.Sprintf("Error verifying token: %v", err))
 			return
 		} 
 

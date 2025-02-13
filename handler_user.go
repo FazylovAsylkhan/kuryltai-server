@@ -121,13 +121,8 @@ func (apiCfg *apiConfig) handlerUpdateUser(w http.ResponseWriter, r *http.Reques
 	respondWithJSON(w, 200, databaseUserToUser(user))
 }
 
-func (apiCfg *apiConfig) handlerLogoutUser(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	if id == "" {
-		respondWithError(w, 400, "Missing session ID")
-		return
-	}
-    _, err := apiCfg.DB.DeleteSession(r.Context(), id)
+func (apiCfg *apiConfig) handlerLogoutUser(w http.ResponseWriter, r *http.Request, user database.User) {
+    _, err := apiCfg.DB.DeleteSession(r.Context(), user.ID)
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Error deleting session: %v", err))
 		return

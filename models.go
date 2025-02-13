@@ -65,10 +65,10 @@ type LoginUserRes struct{
 }
 
 type RenewAccessTokenReq struct {
-	RefreshToken string `json:"refresh_token"`
+	RefreshToken string `json:"refresh"`
 }
 
 type RenewAccessTokenRes struct {
-	AccessToken string `json:"access_token"`
+	AccessToken string `json:"access"`
 	AccessTokenExpiresAt time.Time `json:"access_token_expires_at"`
 }

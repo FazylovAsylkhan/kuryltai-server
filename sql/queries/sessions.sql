@@ -15,5 +15,5 @@ RETURNING *;
 
 -- name: DeleteSession :one
 DELETE FROM sessions
-WHERE id = $1
+WHERE user_id = $1
 RETURNING *;
