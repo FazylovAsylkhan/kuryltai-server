@@ -23,6 +23,14 @@ type ProfileRes struct {
 	HeadLine    string `json:"head_line"`
 }
 
+type UpdateReq struct {
+	Slug        string `json:"slug"`
+	Username    string `json:"username"`
+	HeadLine    string `json:"head_line"`
+	AvatarImage *string `json:"avatar_image"`
+	CoverImage  *string `json:"cover_image"`
+}
+
 func databaseUserToUser(dbUser database.User) UserRes {
 	return UserRes{
 		ID: dbUser.ID,

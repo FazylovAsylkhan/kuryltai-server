@@ -7,7 +7,7 @@ RETURNING *;
 SELECT * FROM users
 WHERE email = $1;
 
--- name: UpdateUser :one
+-- name: UpdatePassword :one
 UPDATE users 
 SET password = $2
 WHERE id = $1

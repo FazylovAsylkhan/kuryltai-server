@@ -53,22 +53,27 @@ func main() {
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"https://*", "http://*"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
 		AllowedHeaders: []string{"*"},
 		ExposedHeaders: []string{"Link"},
 		AllowCredentials: true,
 		MaxAge: 300,
 	}))
-
 	v1Router := chi.NewRouter()
 	v1Router.Post("/users/login", apiCfg.handlerLogin)
 	v1Router.Post("/users/signup", apiCfg.handlerSignup)
 	v1Router.Post("/users/token/refresh", apiCfg.renewAccessToken)
 	v1Router.Post("/users/token/revoke", apiCfg.revokeSession)
-	v1Router.Delete("/users/logout", apiCfg.middlewareAuth(apiCfg.handlerLogoutUser) )
+	v1Router.Delete("/users/logout", apiCfg.middlewareAuth(apiCfg.handlerLogoutUser))
+	v1Router.Post("/users/change-password", apiCfg.middlewareAuth(apiCfg.handlerUpdatePassword))
+	
 	v1Router.Get("/profiles/profile/me", apiCfg.middlewareAuth(apiCfg.handlerGetProfile))
-	// v1Router.Get("/users/user", apiCfg.middlewareAuth())
-	// v1Router.Get("/users/change-password", apiCfg.middlewareAuth(apiCfg.handlerUpdateUser))
+	v1Router.Patch("/profiles/profile/edit", apiCfg.middlewareAuth(apiCfg.handlerUpdateProfile))
+
+
+	router.Handle("/assets/image/*", http.StripPrefix("/assets/image", http.FileServer(http.Dir("./assets/image"))))
+	router.Handle("/assets/video/*", http.StripPrefix("/assets/video", http.FileServer(http.Dir("./assets/video"))))
+	router.Handle("/assets/audio/*", http.StripPrefix("/assets/audio", http.FileServer(http.Dir("./assets/audio"))))
 
 	router.Mount("/v1", v1Router)
 	

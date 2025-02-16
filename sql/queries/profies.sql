@@ -13,6 +13,6 @@ WHERE slug = $1;
 
 -- name: UpdateProfile :one
 UPDATE profiles 
-SET slug = $2, username = $3, avatar_image = $4, cover_image = $5
+SET slug = $2, username = $3, head_line =$4, avatar_image = $5, cover_image = $6
 WHERE user_id = $1
 RETURNING *;

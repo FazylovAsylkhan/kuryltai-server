@@ -99,7 +99,7 @@ func (q *Queries) GetProfileBySlug(ctx context.Context, slug string) (Profile, e
 
 const updateProfile = `-- name: UpdateProfile :one
 UPDATE profiles 
-SET slug = $2, username = $3, avatar_image = $4, cover_image = $5
+SET slug = $2, username = $3, head_line =$4, avatar_image = $5, cover_image = $6
 WHERE user_id = $1
 RETURNING id, user_id, slug, username, updated_at, avatar_image, cover_image, head_line
 `
@@ -108,6 +108,7 @@ type UpdateProfileParams struct {
 	UserID      uuid.UUID
 	Slug        string
 	Username    string
+	HeadLine    sql.NullString
 	AvatarImage sql.NullString
 	CoverImage  sql.NullString
 }
@@ -117,6 +118,7 @@ func (q *Queries) UpdateProfile(ctx context.Context, arg UpdateProfileParams) (P
 		arg.UserID,
 		arg.Slug,
 		arg.Username,
+		arg.HeadLine,
 		arg.AvatarImage,
 		arg.CoverImage,
 	)

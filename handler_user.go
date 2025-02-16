@@ -77,12 +77,13 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, 400, fmt.Sprintf("Couldn't find user: %v", err))
 		return
 	}
-
 	err = util.CheckPassword(params.Password, user.Password)
+	fmt.Println(err)
 	if err != nil {
 		respondWithError(w, 400, "wrong password")
 		return
 	}
+
 	accessToken, accessClaims, err := apiCfg.tokenMaker.CreateToken(user.ID, user.Email, 15 * time.Minute)
 	if err != nil {
 		respondWithError(w, 500, fmt.Sprintf("error creating access token: %v", err))
@@ -117,8 +118,43 @@ func (apiCfg *apiConfig) handlerLogin(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, 200, res)
 }
 
-func (apiCfg *apiConfig) handlerUpdateUser(w http.ResponseWriter, r *http.Request, user database.User) {
-	respondWithJSON(w, 200, databaseUserToUser(user))
+func (apiCfg *apiConfig) handlerUpdatePassword(w http.ResponseWriter, r *http.Request, user database.User) {
+	type parameters struct {
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
+	}
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+	err := decoder.Decode(&params)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Error parsing JSON: %v", err))
+		return
+	}
+
+	err = util.CheckPassword(params.OldPassword, user.Password)
+	if err != nil {
+		respondWithError(w, 400, "wrong password")
+		return
+	}
+
+	hashed, err := util.HashPassword(params.NewPassword)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf("Error hashing password: %v", err))
+		return
+	}
+
+	user, err = apiCfg.DB.UpdatePassword(r.Context(), database.UpdatePasswordParams{
+		ID: user.ID,
+		Password: hashed,
+	})
+	fmt.Println(user)
+	fmt.Println(err)
+	if err != nil {
+		respondWithError(w, 500, fmt.Sprintf("Couldn't change password: %s", err))
+		return
+	}
+
+	respondWithJSON(w, 200, struct{message string}{message: "Password changed successful"})
 }
 
 func (apiCfg *apiConfig) handlerLogoutUser(w http.ResponseWriter, r *http.Request, user database.User) {
@@ -126,7 +162,7 @@ func (apiCfg *apiConfig) handlerLogoutUser(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		respondWithError(w, 400, fmt.Sprintf("Error deleting session: %v", err))
 		return
-	}	
+	}
 	respondWithJSON(w, 200, struct{}{})
 }
 
