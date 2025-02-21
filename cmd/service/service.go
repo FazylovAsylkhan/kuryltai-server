@@ -23,7 +23,7 @@ func Init(cfg *config.Config) (*Service, error) {
 
 	conn, err := sql.Open("postgres", cfg.DbURL)
 	if err != nil {
-		return nil, fmt.Errorf("Can't connect to database", err)
+		return nil, fmt.Errorf("can't connect to database: %v", err)
 	}
 
 	s := &Service{
@@ -43,6 +43,6 @@ func (s Service) Start() {
 
 	log.Printf("Server starting on port %v", s.Config.Port)
 	if err := srv.ListenAndServe(); err != nil {
-		log.Fatalf("Server failed to start: %v", err)
+		log.Fatalf("server failed to start: %v", err)
 	}
 }
